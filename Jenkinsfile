@@ -1,24 +1,29 @@
-pipeline {
-    agent any
+pipeline { 
+    agent any 
 
-    stages {
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    dockerImage = docker.build("java-hello")
-                }
-            }
-        }
+    stages { 
+        stage('Clone Repository') { 
+            steps { 
+                git branch: 'main', url: 'https://github.com/sejalk12/java-docker-hello.git' 
+            } 
+        } 
 
-        stage('Run Container (Test)') {
-            steps {
-                script {
-                    docker.image("java-hello").inside {
-                        echo 'Running Docker container...'
-                        sh 'java HelloWorld'
-                    }
-                }
-            }
-        }
-    }
+        stage('Build Docker Image') { 
+            steps { 
+                script { 
+                    dir('.') { 
+                        docker.build("java-hello-world-app", ".") 
+                    } 
+                } 
+            } 
+        } 
+
+        stage('Run Docker Container') { 
+            steps { 
+                script { 
+                    docker.image("java-hello-world-app").run() 
+                } 
+            } 
+        } 
+    } 
 }
